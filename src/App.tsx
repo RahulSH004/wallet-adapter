@@ -9,6 +9,7 @@ import {
 } from '@solana/wallet-adapter-react-ui';
 import '@solana/wallet-adapter-react-ui/styles.css';
 import { useEffect, useState } from "react";
+import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 
 
 export function App() {
@@ -21,6 +22,7 @@ export function App() {
         <WalletModalProvider>
             <ConnectButton />
             <Portfolio />
+            <SendSol />
         </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
@@ -56,6 +58,32 @@ function Portfolio() {
       Sol balance :- {balance}
     </div>
   )
+}
+
+function SendSol(){
+  const { publicKey, sendTransaction } = useWallet()
+  const {connection} = useConnection();
+
+  async function sendsol(){
+    let to = document.getElementById("to").value;
+    let amount = document.getElementById("amount").value;
+    const transaction = new Transaction();
+      transaction.add(SystemProgram.transfer({
+            fromPubkey: publicKey,
+            toPubkey: new PublicKey(to),
+            lamports: amount * LAMPORTS_PER_SOL,
+        }));
+    await sendTransaction(transaction, connection);
+  }
+
+  return (
+      <div className="flex items-centre gap-2">
+        <input id="to" type="text" placeholder="publickey address" className="border border-gray-400 rounded-full px-4 py-2"/>
+        <input id="amount" type="number" placeholder="Amount" className="border border-gray-400 rounded-full px-4 py-2"/>
+        <button onClick={sendsol}
+        className="border border-gray-400 rounded-full px-4 py-2 bg-green-500 text-white">Send</button>
+      </div>
+    )
 }
 
 
