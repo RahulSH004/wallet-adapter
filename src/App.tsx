@@ -1,4 +1,4 @@
-import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
+import { ConnectionProvider, useConnection, useWallet, WalletProvider } from "@solana/wallet-adapter-react";
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
 import {
@@ -8,6 +8,7 @@ import {
    WalletConnectButton
 } from '@solana/wallet-adapter-react-ui';
 import '@solana/wallet-adapter-react-ui/styles.css';
+import { useEffect, useState } from "react";
 
 
 export function App() {
@@ -19,6 +20,7 @@ export function App() {
       <WalletProvider wallets={[]} autoConnect>
         <WalletModalProvider>
             <ConnectButton />
+            <Portfolio />
         </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
@@ -29,10 +31,29 @@ export function App() {
 }
 
 function ConnectButton(){
+  const { publicKey } = useWallet();
   return (
     <div className="flex w-full justify-end gap-2">
-      <WalletMultiButton />
-      <WalletDisconnectButton />
+      {!publicKey && <WalletMultiButton /> }
+      {publicKey && <WalletDisconnectButton />}
+    </div>
+  )
+}
+function Portfolio() {
+  const { publicKey } = useWallet();
+  const {connection} = useConnection();
+  const [balance , setbalance] = useState<null | number>(null)
+
+  useEffect(() => {
+    if(publicKey){
+      connection.getBalance(publicKey)
+        .then(balance => setbalance(balance))
+    }
+  }, [publicKey])
+  return (
+    <div className="max-w-7xl mx-auto p-8 text-center relative z-10">
+      {publicKey?.toString()} <br />
+      Sol balance :- {balance}
     </div>
   )
 }
