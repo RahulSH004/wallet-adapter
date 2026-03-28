@@ -1,15 +1,13 @@
 import { ConnectionProvider, useConnection, useWallet, WalletProvider } from "@solana/wallet-adapter-react";
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
 import {
   WalletModalProvider,
   WalletDisconnectButton,
    WalletMultiButton,
-   WalletConnectButton
 } from '@solana/wallet-adapter-react-ui';
 import '@solana/wallet-adapter-react-ui/styles.css';
 import { useEffect, useState } from "react";
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
+import { SignMessage } from "./sign_message";
 
 
 export function App() {
@@ -23,6 +21,7 @@ export function App() {
             <ConnectButton />
             <Portfolio />
             <SendSol />
+            <SignMessage />
         </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
